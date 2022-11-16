@@ -1,4 +1,4 @@
-import { Text } from "@react-native-material/core";
+import { Stack, Text } from "@react-native-material/core";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -15,36 +15,51 @@ function Profile({ navigation, route }) {
   const friend = () => {
     if (id === idl && type === "asd") {
       return (
-        <TouchableOpacity>
-          <View style={[styles.button, { backgroundColor: "#E9C8C8" }]}>
-            <Text
-              style={[
-                styles.buttontext,
-                {
-                  color: "#D40707",
-                },
-              ]}
-              onPress={() => {
-                navigation.navigate("Login");
-              }}
-            >
-              Đăng xuát
-            </Text>
-          </View>
-        </TouchableOpacity>
+        <Stack
+          flexDirection="row"
+          style={{
+            justifyContent: "space-evenly",
+            width: "100%",
+          }}
+        >
+          <TouchableOpacity style={{ width: "40%" }}>
+            <View style={[styles.button, { backgroundColor: "#4ECCC4" }]}>
+              <Text
+                style={styles.buttontext}
+                onPress={() => {
+                  navigation.navigate("EditProfile", {
+                    id: id,
+                  });
+                }}
+              >
+                Chỉnh sửa
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity style={{ width: "40%" }}>
+            <View style={[styles.button, { backgroundColor: "#E9C8C8" }]}>
+              <Text
+                style={[
+                  styles.buttontext,
+                  {
+                    color: "#D40707",
+                  },
+                ]}
+                onPress={() => {
+                  navigation.navigate("Login");
+                }}
+              >
+                Đăng xuất
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </Stack>
       );
     } else if (type === "friend" && id !== idl) {
       return (
         <TouchableOpacity>
           <View style={[styles.button, { backgroundColor: "#98E5B7" }]}>
-            <Text
-              style={[styles.buttontext]}
-              onPress={() => {
-                navigation.navigate("Login");
-              }}
-            >
-              Bạn bè
-            </Text>
+            <Text style={[styles.buttontext]}>Nhắn tin</Text>
           </View>
         </TouchableOpacity>
       );
@@ -181,7 +196,7 @@ function Profile({ navigation, route }) {
           ]}
         >
           <Text style={styles.info}>
-            {user.firstName} {user.lastName}
+            {user.lastName} {user.firstName}
           </Text>
           <Text style={styles.info}>{date}</Text>
           <Text style={styles.info}>{user.gender}</Text>
@@ -209,12 +224,12 @@ const styles = StyleSheet.create({
 
   button: {
     borderRadius: 30,
-    padding: 10,
+    paddingVertical: 10,
+    alignItems: "center",
   },
   bot: {
     height: 100,
     alignItems: "center",
-    justifyContent: "center",
   },
   body2: {
     marginTop: 20,

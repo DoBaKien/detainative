@@ -10,9 +10,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Icon from "react-native-vector-icons/AntDesign";
+import Icon from "react-native-vector-icons/FontAwesome";
 import Header from "../../../component/Header";
-
 
 function Add({ route, navigation }) {
   const id = route.params.id;
@@ -22,14 +21,20 @@ function Add({ route, navigation }) {
 
   const handleFind = () => {
     setUser("");
-    axios
-      .get(`/findFBySdt/${number}/${id}`)
-      .then(function (response) {
-        setUser(response.data);
-      })
-      .then(function (error) {
-        console.log(error);
-      });
+    if (number === "") {
+      Alert.alert("Cảnh báo", "Vui lòng nhập số điện thoại", [
+        { text: "OK", onPress: () => setUser("asd") },
+      ]);
+    } else {
+      axios
+        .get(`/findFBySdt/${number}/${id}`)
+        .then(function (response) {
+          setUser(response.data);
+        })
+        .then(function (error) {
+          console.log(error);
+        });
+    }
   };
   const AddFriend = () => {
     axios
@@ -38,9 +43,11 @@ function Add({ route, navigation }) {
         uid2: user.uid,
       })
       .then(function (re) {
-        Alert.alert("Thành công", `Thêm bạn ${user.nickName} thành công `, [
-          { text: "OK", onPress: () => setUser("asd") },
-        ]);
+        Alert.alert(
+          "Thành công",
+          `Gửi lời mời kết bạn ${user.nickName} thành công `,
+          [{ text: "OK", onPress: () => setUser("asd") }]
+        );
       })
       .catch(function (error) {
         console.log(error);
@@ -87,27 +94,24 @@ function Add({ route, navigation }) {
         style={styles.background}
       />
       <Header navigation={navigation} id={id} />
-      <View style={{ flex: 1, marginTop: 20 }}>
-        <View style={styles.boxinput}>
+      <View style={{ height: 130, marginTop: 20, alignItems: "center" }}>
+        <View flexDirection="row" style={styles.input}>
+          <Icon name="search" size={30} color="#C0C0C0" />
           <TextInput
-            placeholder="Tìm kiếm"
+            placeholder="Nhập số điện thoại"
             variant="outlined"
-            style={styles.input}
+            style={styles.textinput}
             onChangeText={(e) => setNumber(e)}
           />
-          <TouchableOpacity>
-            <Icon
-              name="search1"
-              color="#000"
-              size={40}
-              style={styles.iconsearch}
-              onPress={() => handleFind()}
-            />
+          <TouchableOpacity onPress={() => handleFind()}>
+            <View style={styles.boxbutton}>
+              <Text style={{ fontSize: 20, color: "white" }}>Tìm</Text>
+            </View>
           </TouchableOpacity>
         </View>
         <View style={styles.navbar}>
           <TouchableOpacity>
-            <View style={styles.boxnavbar}>
+            <View style={[styles.boxnavbar, { backgroundColor: "#87D6E1" }]}>
               <Text variant="body1">Thêm bạn</Text>
             </View>
           </TouchableOpacity>
@@ -151,6 +155,13 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 50,
   },
+  boxbutton: {
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    marginLeft: 10,
+    backgroundColor: "#87B4C8",
+    borderRadius: 20,
+  },
   logo: {
     resizeMode: "contain",
     height: 50,
@@ -169,37 +180,30 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     flexDirection: "column",
   },
-  boxinput: {
-    flexDirection: "row",
-    width: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: 60,
+  textinput: {
+    width: "60%",
+    marginLeft: 10,
+    fontSize: 18,
   },
   input: {
     height: 60,
-    width: "75%",
+    width: "90%",
     borderColor: "gray",
-    borderWidth: 2,
-    borderRadius: 20,
-    fontSize: 18,
-    padding: 10,
+    borderWidth: 1,
+    borderRadius: 50,
+    paddingLeft: 20,
     backgroundColor: "white",
+    alignItems: "center",
   },
-  iconsearch: {
-    marginLeft: 10,
-    backgroundColor: "lightgray",
-    borderRadius: 10,
-  },
+
   navbar: {
     height: 50,
-    marginLeft: 20,
+    justifyContent: "center",
+    marginTop: 10,
     alignItems: "center",
     flexDirection: "row",
   },
   boxnavbar: {
-    backgroundColor: "#96E9DA",
     padding: 10,
     borderRadius: 20,
   },

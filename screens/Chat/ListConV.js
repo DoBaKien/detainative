@@ -19,7 +19,7 @@ const ListConV = ({ a, navigation, id }) => {
         />
         <View>
           <Text style={styles.name}>{a.name}</Text>
-          <Text style={styles.message}>{a.name}</Text>
+          <Text style={styles.message}>{a.type}</Text>
         </View>
       </View>
     </TouchableOpacity>

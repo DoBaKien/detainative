@@ -17,7 +17,7 @@ function Header({ navigation, id }) {
           navigation.goBack();
         }}
       >
-        <Icon name="menu" size={30} color="#900" style={styles.imagestyle} />
+        <Icon name="log-out" size={30} color="#900" style={styles.imagestyle} />
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {

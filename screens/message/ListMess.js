@@ -1,7 +1,6 @@
 import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 
-
 const ListMess = ({ con, id, user }) => {
   const checkName = (name) => {
     let a = name.nickName;
@@ -11,21 +10,32 @@ const ListMess = ({ con, id, user }) => {
     let idSend = id;
     return idSend === uid;
   };
-
- 
+  const checkAvatar = (name) => {
+    let a = name.avatar;
+    return a;
+  };
   const test = (content) => {
     if (content.length > 1000) {
       return (
-        <Image
+        <View
           style={{
-            width: 250,
+            width: 200,
             height: 200,
-            resizeMode: "contain",
+            borderRadius: 20,
+            backgroundColor: "pink",
           }}
-          source={{
-            uri: content,
-          }}
-        />
+        >
+          <Image
+            style={{
+              width: 200,
+              height: 200,
+              resizeMode: "contain",
+            }}
+            source={{
+              uri: content,
+            }}
+          />
+        </View>
       );
     } else {
       return (
@@ -33,14 +43,13 @@ const ListMess = ({ con, id, user }) => {
           style={{
             width: "100%",
             maxWidth: 250,
-            backgroundColor: "#e693f9",
+            backgroundColor: "pink",
             borderRadius: 20,
-            padding: 5,
+            padding: 8,
+            alignItems: "center",
           }}
         >
-          <Text style={{ textAlign: "center" }}>
-            <Text>{content}</Text>
-          </Text>
+          <Text style={{ fontSize: 16 }}>{content}</Text>
         </View>
       );
     }
@@ -52,13 +61,29 @@ const ListMess = ({ con, id, user }) => {
           width: "100%",
           marginBottom: 10,
           flexDirection: idMessage(con.uid) ? "row-reverse" : "row",
-          alignItems: idMessage(con.uid) ? "flex-end" : "flex-start",
+          alignItems: "flex-end",
         }}
       >
-        <Image
-          style={styles.tinyLogo}
-          source={require("../../component/image/user-icon.png")}
-        />
+        <View
+          style={{
+            marginLeft: idMessage(con.uid) ? 4 : 0,
+            marginRight: idMessage(con.uid) ? 0 : 4,
+          }}
+        >
+          {Array.from(user)
+            .filter((word) => word.uid === con.uid)
+            .map((number, i) => (
+              <Image
+                key={i}
+                style={styles.tinyLogo}
+                source={{
+                  uri:
+                    checkAvatar(number) ||
+                    "https://cdn.icon-icons.com/icons2/1141/PNG/512/1486395884-account_80606.png",
+                }}
+              />
+            ))}
+        </View>
         <View>
           {Array.from(user)
             .filter((word) => word.uid === con.uid)
@@ -83,11 +108,8 @@ const styles = StyleSheet.create({
   tinyLogo: {
     width: 50,
     height: 50,
-  },
-  logo: {
-    resizeMode: "stretch",
-    width: 66,
-    height: 58,
+    resizeMode: "contain",
+    borderRadius: 25,
   },
 });
 

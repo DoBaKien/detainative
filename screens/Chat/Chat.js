@@ -1,23 +1,30 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, TextInput, View } from "react-native";
-import Icon from "react-native-vector-icons/AntDesign";
 
 import ListConV from "./ListConV";
 
 function Chat({ id, navigation }) {
   const [conV, setConV] = useState("");
-
+  const [search, setSearch] = useState("");
   useEffect(() => {
     axios
       .get(`/loadUserConv/${id}`)
       .then(function (response) {
-        setConV(response.data);
+        setConV(response.data.filter(ser).sort((a, b) => a.cid - b.cid));
       })
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [search]);
+
+  const ser = (val) => {
+    if (search === "") {
+      return val;
+    } else if (val.name.toLowerCase().includes(search.toLowerCase())) {
+      return val;
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.boxinput}>
@@ -25,8 +32,8 @@ function Chat({ id, navigation }) {
           placeholder="Tìm kiếm"
           variant="outlined"
           style={styles.input}
+          onChangeText={(e) => setSearch(e)}
         />
-        <Icon name="search1" color="#000" size={40} style={styles.iconsearch} />
       </View>
 
       <View style={{ flex: 8, width: "90%" }}>
@@ -49,11 +56,12 @@ const styles = StyleSheet.create({
   boxinput: {
     flexDirection: "row",
     width: "100%",
-    marginTop: 10,
+    marginTop: 20,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    flex: 1,
+    marginBottom: 30,
+    flex: 0.5,
   },
   input: {
     height: 60,
@@ -66,11 +74,6 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "white",
     marginTop: 15,
-  },
-  iconsearch: {
-    marginLeft: 10,
-    backgroundColor: "lightgray",
-    borderRadius: 10,
   },
 });
 

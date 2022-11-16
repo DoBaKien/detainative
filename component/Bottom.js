@@ -8,6 +8,7 @@ import Group from "../screens/Group/Group";
 
 function Bottom({ route, navigation }) {
   const id = route.params.id;
+
   const [screen, setScreen] = useState(
     <Chat id={id} navigation={navigation} />
   );

@@ -1,7 +1,22 @@
-import { Text } from "@react-native-material/core";
+import { Button, Text } from "@react-native-material/core";
 import { Image, StyleSheet, View } from "react-native";
 
-function ListMember({ a }) {
+function ListMember({ a, role }) {
+  const type = () => {
+    if (role === "Owner") {
+      return (
+        <View style={styles.buttontext}>
+          <Text style={{ color: "white" }}>Xóa khỏi nhóm</Text>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.buttontv}>
+          <Text>Thành viên</Text>
+        </View>
+      );
+    }
+  };
   return (
     <View style={styles.container}>
       <Image
@@ -13,16 +28,32 @@ function ListMember({ a }) {
         }}
       />
 
-      <Text variant="subtitle1">{a.nickName}</Text>
+      <Text variant="subtitle1" numberOfLines={1} style={{ width: 180 }}>
+        {a.nickName}
+      </Text>
+      {type()}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  buttontext: {
+    width: 150,
+    borderRadius: 30,
+    paddingLeft: 20,
+    backgroundColor: "red",
+  },
+  buttontv: {
+    width: 120,
+    borderRadius: 30,
+    paddingLeft: 20,
+    backgroundColor: "#B9ECBB",
+  },
   container: {
-    flexDirection: "row",
     marginBottom: 10,
     alignItems: "center",
+    justifyContent: "space-around",
+    flexDirection: "row",
   },
   logo: {
     resizeMode: "contain",

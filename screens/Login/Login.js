@@ -1,5 +1,12 @@
-import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
-import { Stack, TextInput, Text } from "@react-native-material/core";
+import {
+  StyleSheet,
+  View,
+  Image,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import { Stack, Text } from "@react-native-material/core";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import axios from "axios";
@@ -17,6 +24,8 @@ function Login({ navigation }) {
     }
   };
   function callFunctionJs() {
+    // Alert.alert("Yêu cầu", "Vui lòng nhập đầy đủ thông tin", [{ text: "OK" }]);
+
     axios
       .post(`/login`, {
         phoneNumber: "0905515525",
@@ -28,7 +37,6 @@ function Login({ navigation }) {
           storeData(response.data);
           navigation.navigate("Chat", {
             id: response.data,
-            name: sdt,
           });
         }
       })
@@ -53,28 +61,43 @@ function Login({ navigation }) {
           style={styles.tinyLogo}
           source={require("../../component/image/logo.png")}
         />
-        <Stack spacing={10}>
+        <Stack spacing={30}>
           <View style={{ alignItems: "center" }}>
             <Text variant="h3">Đăng nhập</Text>
           </View>
-          <TextInput
-            placeholder="Số diện thoại *"
-            variant="outlined"
-            onChangeText={(value) => setsdt(value)}
-          />
-          <TextInput
-            placeholder="Mật khẩu *"
-            secureTextEntry
-            variant="outlined"
-            onChangeText={(value) => setMk(value)}
-          />
+          <View flexDirection="row" style={styles.input}>
+            <Icon name="user-alt" size={30} color="#C0C0C0" />
+            <TextInput
+              placeholder="Số diện thoại *"
+              variant="outlined"
+              keyboardType="number-pad"
+              style={styles.textinput}
+              onChangeText={(value) => setsdt(value)}
+            />
+          </View>
+          <View flexDirection="row" style={styles.input}>
+            <Icon name="key" size={30} color="#C0C0C0" />
+            <TextInput
+              placeholder="Mật khẩu *"
+              secureTextEntry
+              variant="outlined"
+              style={styles.textinput}
+              onChangeText={(value) => setMk(value)}
+            />
+          </View>
 
           <View style={{ alignItems: "center" }}>
             <TouchableOpacity style={styles.login} onPress={callFunctionJs}>
               <Text>Đăng nhập</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.forget}>
-              <Text style={styles.text1}>Quên mật khẩu</Text>
+              <View flexDirection="row" style={{ alignItems: "center" }}>
+                <Image
+                  style={{ width: 25, height: 25, resizeMode: "contain" }}
+                  source={require("../../component/image/fpass-icon.png")}
+                />
+                <Text style={styles.text1}>Quên mật khẩu</Text>
+              </View>
             </TouchableOpacity>
             <View style={{ flexDirection: "row", marginTop: 50 }}>
               <Text> Bạn chưa có tài khoản? </Text>
@@ -89,7 +112,6 @@ function Login({ navigation }) {
           </View>
         </Stack>
       </View>
-      <View style={{ flex: 1 }}></View>
     </View>
   );
 }
@@ -101,6 +123,21 @@ const styles = StyleSheet.create({
   },
   forget: {
     marginTop: 50,
+  },
+  textinput: {
+    width: "80%",
+    marginLeft: 10,
+    fontSize: 20,
+  },
+  input: {
+    height: 60,
+    width: "90%",
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 50,
+    paddingLeft: 20,
+    backgroundColor: "white",
+    alignItems: "center",
   },
   login: {
     backgroundColor: "#4ECCC4",
@@ -118,7 +155,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 24,
+    padding: 20,
+    paddingTop: 0,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -131,7 +169,8 @@ const styles = StyleSheet.create({
   tinyLogo: {
     resizeMode: "contain",
     width: "100%",
-    height: 200,
+    marginBottom: 20,
+    height: 120,
   },
 });
 

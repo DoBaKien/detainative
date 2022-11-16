@@ -8,36 +8,42 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Icon from "react-native-vector-icons/AntDesign";
 
 import ListFriend from "./ListFriend";
+
 function Friend({ id, navigation }) {
   const [friends, setFriends] = useState("");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     axios
       .get(`/findUserFriends/${id}`)
       .then(function (response) {
-        setFriends(response.data);
+        setFriends(response.data.filter(ser));
       })
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [search]);
+  
+  const ser = (val) => {
+    if (search === "") {
+      return val;
+    } else if (val.nickName.toLowerCase().includes(search.toLowerCase())) {
+      return val;
+    } else if (val.phoneNumber.toLowerCase().includes(search.toLowerCase())) {
+      return val;
+    }
+  };
   return (
     <View style={styles.container}>
-      <View style={{ flex: 1 }}>
+      <View style={{ height: 130 }}>
         <View style={styles.boxinput}>
           <TextInput
             placeholder="Tìm kiếm"
             variant="outlined"
             style={styles.input}
-          />
-          <Icon
-            name="search1"
-            color="#000"
-            size={40}
-            style={styles.iconsearch}
+            onChangeText={(e) => setSearch(e)}
           />
         </View>
         <View style={styles.navbar}>
@@ -119,9 +125,10 @@ const styles = StyleSheet.create({
   },
   navbar: {
     height: 50,
-    marginLeft: 20,
+    justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
+    marginTop: 10,
   },
 
   boxnavbar: {

@@ -17,17 +17,26 @@ import ListSent from "./ListSent";
 function Sent({ route, navigation }) {
   const id = route.params.id;
   const [friendSent, setFriendSent] = useState("");
-
+  const [search, setSearch] = useState("");
+  const ser = (val) => {
+    if (search === "") {
+      return val;
+    } else if (val.nickName.toLowerCase().includes(search.toLowerCase())) {
+      return val;
+    } else if (val.phoneNumber.toLowerCase().includes(search.toLowerCase())) {
+      return val;
+    }
+  };
   useEffect(() => {
     axios
       .get(`/findSentRequests/${id}`)
       .then(function (response) {
-        setFriendSent(response.data);
+        setFriendSent(response.data.filter(ser));
       })
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [search]);
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -40,18 +49,13 @@ function Sent({ route, navigation }) {
         style={styles.background}
       />
       <Header navigation={navigation} id={id} />
-      <View style={{ flex: 1, marginTop: 20 }}>
+      <View style={{ height: 130, marginTop: 20 }}>
         <View style={styles.boxinput}>
           <TextInput
             placeholder="Tìm kiếm"
             variant="outlined"
             style={styles.input}
-          />
-          <Icon
-            name="search1"
-            color="#000"
-            size={40}
-            style={styles.iconsearch}
+            onChangeText={(e) => setSearch(e)}
           />
         </View>
         <View style={styles.navbar}>
@@ -67,7 +71,7 @@ function Sent({ route, navigation }) {
             </View>
           </TouchableOpacity>
           <TouchableOpacity>
-            <View style={styles.boxnavbar2}>
+            <View style={[styles.boxnavbar2, { backgroundColor: "#96E9DA" }]}>
               <Text
                 variant="body1"
                 onPress={() => {
@@ -81,7 +85,7 @@ function Sent({ route, navigation }) {
             </View>
           </TouchableOpacity>
           <TouchableOpacity>
-            <View style={styles.boxnavbar2}>
+            <View style={[styles.boxnavbar2, { backgroundColor: "#87D6E1" }]}>
               <Text variant="body1">Đã gửi</Text>
             </View>
           </TouchableOpacity>
@@ -143,9 +147,10 @@ const styles = StyleSheet.create({
   },
   navbar: {
     height: 50,
-    marginLeft: 20,
+    justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
+    marginTop: 10,
   },
 
   boxnavbar: {
@@ -154,7 +159,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   boxnavbar2: {
-    backgroundColor: "#96E9DA",
     padding: 10,
     borderRadius: 20,
     marginLeft: 20,

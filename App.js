@@ -10,6 +10,7 @@ import Request from "./screens/Friend/Rq/Request";
 import Sent from "./screens/Friend/Sent/Sent";
 import Add from "./screens/Friend/Add/Add";
 import axios from "axios";
+import EditProfile from "./screens/Profile/EditProfile";
 axios.defaults.baseURL = "http://192.168.0.100:8083";
 const Stack = createNativeStackNavigator();
 
@@ -76,6 +77,13 @@ export default function App() {
         <Stack.Screen
           name="Add"
           component={Add}
+          options={{
+            headerShown: false,
+          }}
+        ></Stack.Screen>
+        <Stack.Screen
+          name="EditProfile"
+          component={EditProfile}
           options={{
             headerShown: false,
           }}

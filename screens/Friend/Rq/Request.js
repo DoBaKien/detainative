@@ -16,19 +16,28 @@ import ListRq from "./ListRq";
 
 function Request({ route, navigation }) {
   const id = route.params.id;
-
   const [friendRq, setFriendRq] = useState("");
+  const [search, setSearch] = useState("");
 
+  const ser = (val) => {
+    if (search === "") {
+      return val;
+    } else if (val.nickName.toLowerCase().includes(search.toLowerCase())) {
+      return val;
+    } else if (val.phoneNumber.toLowerCase().includes(search.toLowerCase())) {
+      return val;
+    }
+  };
   useEffect(() => {
     axios
       .get(`/findPendingRequests/${id}`)
       .then(function (response) {
-        setFriendRq(response.data);
+        setFriendRq(response.data.filter(ser));
       })
       .catch(function (error) {
         console.log(error);
       });
-  }, [id]);
+  }, [search]);
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -41,18 +50,13 @@ function Request({ route, navigation }) {
         style={styles.background}
       />
       <Header navigation={navigation} id={id} />
-      <View style={{ flex: 1, marginTop: 20 }}>
+      <View style={{ height: 130, marginTop: 20 }}>
         <View style={styles.boxinput}>
           <TextInput
             placeholder="Tìm kiếm"
             variant="outlined"
             style={styles.input}
-          />
-          <Icon
-            name="search1"
-            color="#000"
-            size={40}
-            style={styles.iconsearch}
+            onChangeText={(e) => setSearch(e)}
           />
         </View>
         <View style={styles.navbar}>
@@ -63,12 +67,12 @@ function Request({ route, navigation }) {
               });
             }}
           >
-            <View style={styles.boxnavbar}>
+            <View style={[styles.boxnavbar2, { backgroundColor: "#96E9DA" }]}>
               <Text variant="body1">Thêm bạn</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity>
-            <View style={styles.boxnavbar2}>
+            <View style={[styles.boxnavbar2, { backgroundColor: "#87D6E1" }]}>
               <Text variant="body1">Chờ phản hồi</Text>
             </View>
           </TouchableOpacity>
@@ -79,7 +83,7 @@ function Request({ route, navigation }) {
               });
             }}
           >
-            <View style={styles.boxnavbar2}>
+            <View style={[styles.boxnavbar2, { backgroundColor: "#96E9DA" }]}>
               <Text variant="body1">Đã gửi</Text>
             </View>
           </TouchableOpacity>
@@ -134,25 +138,21 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "white",
   },
-  iconsearch: {
-    marginLeft: 10,
-    backgroundColor: "lightgray",
-    borderRadius: 10,
-  },
+
   navbar: {
     height: 50,
-    marginLeft: 20,
+    justifyContent: "center",
+    marginTop: 10,
     alignItems: "center",
     flexDirection: "row",
   },
 
   boxnavbar: {
-    backgroundColor: "#96E9DA",
+    backgroundColor: "##96E9DA",
     padding: 10,
     borderRadius: 20,
   },
   boxnavbar2: {
-    backgroundColor: "#96E9DA",
     padding: 10,
     borderRadius: 20,
     marginLeft: 20,

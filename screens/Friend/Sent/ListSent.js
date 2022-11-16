@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text } from "@react-native-material/core";
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { Alert, Image, StyleSheet, TouchableOpacity, View } from "react-native";
 

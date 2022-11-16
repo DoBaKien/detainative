@@ -13,6 +13,7 @@ import ListMess from "./ListMess";
 import { io } from "socket.io-client";
 import { LinearGradient } from "expo-linear-gradient";
 import * as ImagePicker from "expo-image-picker";
+import { ModalChat } from "../../component/ModalChat";
 
 const socket = io.connect("https://chat-app-provip.herokuapp.com");
 
@@ -25,13 +26,18 @@ function Message({ route, navigation }) {
   const [conv, setConv] = useState("");
   const scrollViewRef = useRef();
   const [messageList, setMessageList] = useState([]);
-
+  const [messImg, setMessImg] = useState([]);
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
     socket.emit("join_room", cid);
     axios
       .get(`/receive/${cid}`)
       .then(function (response) {
         setMessageList(response.data);
+        var result = response.data.filter(function (word) {
+          return word.content.length > 1000;
+        });
+        setMessImg(result);
       })
       .catch(function (error) {
         console.log("receive" + error);
@@ -39,7 +45,7 @@ function Message({ route, navigation }) {
   }, []);
   useEffect(() => {
     axios
-      .get(`${ip}/loadConvMem/${cid}`)
+      .get(`/loadConvMem/${cid}`)
       .then(function (response) {
         setUser(response.data);
       })
@@ -49,7 +55,7 @@ function Message({ route, navigation }) {
   }, []);
   useEffect(() => {
     axios
-      .get(`${ip}/loadConv/${cid}`)
+      .get(`/loadConv/${cid}`)
       .then(function (response) {
         setConv(response.data);
       })
@@ -60,7 +66,7 @@ function Message({ route, navigation }) {
   const handle = async (e) => {
     if (currentMessage !== "") {
       axios
-        .post(`${ip}/send`, {
+        .post(`/send`, {
           cid: cid,
           content: currentMessage,
           uid: id,
@@ -96,7 +102,7 @@ function Message({ route, navigation }) {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      aspect: [4, 3],
+
       quality: 1,
       base64: true,
     });
@@ -115,6 +121,11 @@ function Message({ route, navigation }) {
         ]}
         style={styles.background}
       />
+      <ModalChat
+        visible={visible}
+        setVisible={setVisible}
+        setCurrentMessage={setCurrentMessage}
+      />
       <View style={styles.header}>
         <TouchableOpacity onPress={leaveroom}>
           <Image
@@ -126,7 +137,9 @@ function Message({ route, navigation }) {
         <TouchableOpacity
           onPress={() =>
             navigation.navigate("ChatDetail", {
-              id: cid,
+              cid: cid,
+              id: id,
+              messImg: messImg,
               user: user,
             })
           }
@@ -151,7 +164,7 @@ function Message({ route, navigation }) {
         />
       </View>
       <View style={styles.input}>
-        <TouchableOpacity onPress={pickImage}>
+        <TouchableOpacity onPress={() => setVisible(true)}>
           <Image
             style={styles.tinyLogo}
             source={require("../../component/image/image-icon.png")}
