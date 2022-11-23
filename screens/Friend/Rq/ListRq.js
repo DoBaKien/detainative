@@ -94,7 +94,7 @@ function ListRq({ a, id, setFriendRq, navigation }) {
         >
           <Image
             style={styles.tinyLogo}
-            source={require("../../../component/image/add-icon.png")}
+            source={require("../../../component/image/ok-icon.png")}
           />
         </TouchableOpacity>
         <TouchableOpacity

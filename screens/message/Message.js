@@ -87,6 +87,7 @@ function Message({ route, navigation }) {
 
       await socket.emit("send_message", messageData);
     }
+    setCurrentMessage("");
   };
   useEffect(() => {
     socket.on("receive_message", (data) => {
@@ -97,18 +98,6 @@ function Message({ route, navigation }) {
   const leaveroom = () => {
     socket.emit("ic_leave", cid);
     navigation.goBack();
-  };
-
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-
-      quality: 1,
-      base64: true,
-    });
-    if (!result.cancelled) {
-      setCurrentMessage("data:image/jpeg;base64," + result.base64);
-    }
   };
 
   return (
@@ -179,6 +168,7 @@ function Message({ route, navigation }) {
         <TextInput
           placeholder="Nhập tin nhắn"
           style={styles.inputtext}
+          value={currentMessage}
           onChangeText={(value) => setCurrentMessage(value)}
         />
         <TouchableOpacity onPress={handle}>

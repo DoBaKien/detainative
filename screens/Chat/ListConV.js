@@ -1,7 +1,58 @@
-import React from "react";
+import axios from "axios";
+import React, { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const ListConV = ({ a, navigation, id }) => {
+  const [dir, setDir] = useState("");
+
+  const type = (name, type) => {
+    if (type === "direct") {
+      axios
+        .get(`/loadConvMem/${a.cid}`)
+        .then(function (response) {
+          var results = response.data.filter(function (word) {
+            return word.uid !== id;
+          });
+          setDir(results[0]);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      return (
+        <View style={styles.chip}>
+          <Image
+            style={styles.tinyLogo}
+            source={{
+              uri:
+                dir.avatar ||
+                "https://cdn.icon-icons.com/icons2/1141/PNG/512/1486395884-account_80606.png",
+            }}
+          />
+          <View>
+            <Text style={styles.name}>{dir.nickName}</Text>
+            <Text style={styles.message}>{a.type}</Text>
+          </View>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.chip}>
+          <Image
+            style={styles.tinyLogo}
+            source={{
+              uri:
+                a.avatar ||
+                "https://cdn.icon-icons.com/icons2/1141/PNG/512/1486395884-account_80606.png",
+            }}
+          />
+          <View>
+            <Text style={styles.name}>{name}</Text>
+            <Text style={styles.message}>{a.type}</Text>
+          </View>
+        </View>
+      );
+    }
+  };
   return (
     <TouchableOpacity
       style={styles.button}
@@ -12,16 +63,7 @@ const ListConV = ({ a, navigation, id }) => {
         });
       }}
     >
-      <View style={styles.chip}>
-        <Image
-          style={styles.tinyLogo}
-          source={require("../../component/image/user-icon.png")}
-        />
-        <View>
-          <Text style={styles.name}>{a.name}</Text>
-          <Text style={styles.message}>{a.type}</Text>
-        </View>
-      </View>
+      {type(a.name, a.type)}
     </TouchableOpacity>
   );
 };
@@ -40,12 +82,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#87D6E1",
     flexDirection: "row",
     marginTop: 10,
-    padding: 20,
+    padding: 15,
     borderRadius: 20,
   },
   tinyLogo: {
-    width: 50,
-    height: 50,
+    width: 70,
+    height: 70,
+    borderRadius: 50,
   },
 });
 export default ListConV;

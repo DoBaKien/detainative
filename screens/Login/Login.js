@@ -4,6 +4,7 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { Stack, Text } from "@react-native-material/core";
@@ -33,6 +34,11 @@ function Login({ navigation }) {
       })
       .then(function (response) {
         if (response.data === "Sai thong tin dang nhap") {
+          Alert.alert(
+            "Cảnh báo",
+            "Vui lòng kiểm tra số điện thoại hoặc mật khấu",
+            [{ text: "OK" }]
+          );
         } else {
           storeData(response.data);
           navigation.navigate("Chat", {

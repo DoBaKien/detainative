@@ -1,4 +1,4 @@
-import { Button, Text } from "@react-native-material/core";
+import { Text } from "@react-native-material/core";
 import { Image, StyleSheet, View } from "react-native";
 
 function ListMember({ a, role }) {

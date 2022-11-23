@@ -34,6 +34,7 @@ function EditProfile({ navigation, route }) {
   const [show, setShow] = useState(false);
   const [text, setText] = useState("");
   const [visible, setVisible] = useState(false);
+  
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || datec;
     setShow(Platform.OS === "ios");

@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text } from "@react-native-material/core";
+import axios from "axios";
 import { useEffect, useState } from "react";
 
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -11,6 +12,7 @@ function ListFriend({ a, navigation }) {
     });
   }, []);
   const [value, setValue] = useState("");
+
   const handle = (uid) => {
     navigation.navigate("Profile", {
       id1: uid,
@@ -18,8 +20,21 @@ function ListFriend({ a, navigation }) {
       type: "friend",
     });
   };
+  const handleChat = (fid) => {
+    axios
+      .get(`/startDirectChat/${fid}/${value}`)
+      .then(function (response) {
+        navigation.navigate("Message", {
+          cid: response.data,
+          id: value,
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
   return (
-    <TouchableOpacity onPress={() => handle(a.uid)}>
+    <TouchableOpacity onPress={() => handleChat(a.uid)}>
       <View style={styles.container}>
         <Image
           style={styles.logo}
@@ -33,9 +48,12 @@ function ListFriend({ a, navigation }) {
           {a.nickName}
         </Text>
 
-        <Text variant="caption" style={{ marginRight: 20 }}>
-          Bạn bè
-        </Text>
+        <TouchableOpacity onPress={() => handle(a.uid)}>
+          <Image
+            style={styles.tinyLogo1}
+            source={require("../../component/image/profile-icon.png")}
+          />
+        </TouchableOpacity>
 
         <TouchableOpacity>
           <Image
@@ -62,6 +80,11 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     height: 50,
     width: 50,
+  },
+  tinyLogo1: {
+    resizeMode: "stretch",
+    width: 40,
+    height: 40,
   },
   tinyLogo: {
     resizeMode: "stretch",

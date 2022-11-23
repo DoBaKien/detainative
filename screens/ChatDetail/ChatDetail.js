@@ -154,7 +154,7 @@ function ChatDetail({ route, navigation }) {
               data={members}
               keyExtractor={(item) => item.uid}
               renderItem={(data) => (
-                <ListMember a={data.item} navigation={navigation} />
+                <ListMember a={data.item} navigation={navigation} role={role} />
               )}
             />
           </View>

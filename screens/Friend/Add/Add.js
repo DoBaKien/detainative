@@ -18,23 +18,35 @@ function Add({ route, navigation }) {
 
   const [user, setUser] = useState("asd");
   const [number, setNumber] = useState("");
-
+  const [type, setType] = useState("");
   const handleFind = () => {
-    setUser("");
     if (number === "") {
       Alert.alert("Cảnh báo", "Vui lòng nhập số điện thoại", [
         { text: "OK", onPress: () => setUser("asd") },
       ]);
     } else {
       axios
-        .get(`/findFBySdt/${number}/${id}`)
+        .get(`/findAllBySdt/${number}/${id}`)
         .then(function (response) {
+          console.log(response.data);
           setUser(response.data);
+          if (response.data.uid !== "nf") {
+            axios
+              .get(`/checkFStt/${id}/${response.data.uid}`)
+              .then(function (response) {
+                setType(response.data);
+                console.log(response.data);
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
+          }
         })
         .then(function (error) {
           console.log(error);
         });
     }
+    setNumber("")
   };
   const AddFriend = () => {
     axios
@@ -46,17 +58,32 @@ function Add({ route, navigation }) {
         Alert.alert(
           "Thành công",
           `Gửi lời mời kết bạn ${user.nickName} thành công `,
-          [{ text: "OK", onPress: () => setUser("asd") }]
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                setUser("asd");
+                navigation.navigate("Chat", { id: id });
+              },
+            },
+          ]
         );
       })
       .catch(function (error) {
         console.log(error);
       });
   };
+  const handle = (uid, value) => {
+    navigation.navigate("Profile", {
+      id1: uid,
+      id: id,
+      type: value,
+    });
+  };
   const UserFind = () => {
-    if (user.uid !== "f" && user !== "asd" && user.uid !== "nf") {
+    if (user.uid !== "nf" && type === "Stranger" && user !== "asd") {
       return (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => handle(user.uid, "add")}>
           <View style={styles.viewUser}>
             <Image
               style={styles.logo}
@@ -67,7 +94,7 @@ function Add({ route, navigation }) {
               }}
             />
             <Text variant="h4">{user.nickName}</Text>
-            <TouchableOpacity onPress={AddFriend}>
+            <TouchableOpacity onPress={() => AddFriend()}>
               <Image
                 style={styles.logo}
                 source={require("../../../component/image/add-icon.png")}
@@ -76,11 +103,117 @@ function Add({ route, navigation }) {
           </View>
         </TouchableOpacity>
       );
-    } else if (user.uid === "f") {
-      return <Text variant="h5">Đã kết bạn hoặc đã gửi lời mời kết bạn</Text>;
-    } else if (user.uid === "nf") {
-      return <Text variant="h5">Không tìm thấy số điện thoại</Text>;
+    } else if (
+      user.uid !== "nf" &&
+      type === "Cancel request" &&
+      user !== "asd"
+    ) {
+      return (
+        <TouchableOpacity onPress={() => handle(user.uid, "sent")}>
+          <View style={styles.viewUser}>
+            <Image
+              style={styles.logo}
+              source={{
+                uri:
+                  user.avatar ||
+                  "https://cdn.icon-icons.com/icons2/1141/PNG/512/1486395884-account_80606.png",
+              }}
+            />
+            <Text variant="h4">{user.nickName}</Text>
+            <Text variant="subtitle1">Đã gửi</Text>
+            <TouchableOpacity onPress={() => RejecttRq()}>
+              <Image
+                style={styles.logo}
+                source={require("../../../component/image/cancel-icon.png")}
+              />
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      );
+    } else if (user.uid !== "nf" && type === "Response" && user !== "asd") {
+      return (
+        <TouchableOpacity onPress={() => handle(user.uid, "rq")}>
+          <View style={styles.viewUser}>
+            <Image
+              style={styles.logo}
+              source={{
+                uri:
+                  user.avatar ||
+                  "https://cdn.icon-icons.com/icons2/1141/PNG/512/1486395884-account_80606.png",
+              }}
+            />
+            <View>
+              <Text variant="h4">{user.nickName}</Text>
+              <Text variant="subtitle1">Chờ xác nhận</Text>
+            </View>
+            <TouchableOpacity onPress={() => RejecttRq()}>
+              <Image
+                style={styles.logo}
+                source={require("../../../component/image/ok-icon.png")}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => RejecttRq()}>
+              <Image
+                style={styles.logo}
+                source={require("../../../component/image/cancel-icon.png")}
+              />
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      );
+    } else if (user.uid !== "nf" && type === "Friend" && user !== "asd") {
+      return (
+        <TouchableOpacity onPress={() => handle(user.uid, "Friend")}>
+          <View style={styles.viewUser}>
+            <Image
+              style={styles.logo}
+              source={{
+                uri:
+                  user.avatar ||
+                  "https://cdn.icon-icons.com/icons2/1141/PNG/512/1486395884-account_80606.png",
+              }}
+            />
+            <View>
+              <Text variant="h4">{user.nickName}</Text>
+              <Text variant="subtitle1">Bạn bè</Text>
+            </View>
+            <TouchableOpacity onPress={() => RejecttRq()}>
+              <Image
+                style={styles.logo}
+                source={require("../../../component/image/chat-icon.png")}
+              />
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      );
     }
+  };
+  const RejecttRq = () => {
+    Alert.alert(
+      "Cảnh báo",
+      `Bạn có chắc chắn muốn hủy lời mời kết bạn với ${user.nickName}`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            axios.delete(`/deleteRequest/${id}/${user.uid}`).then((res) => {
+              Alert.alert("Thành công", `Xóa lời mời kết bạn thành công `, [
+                {
+                  text: "OK",
+                  onPress: () => {
+                    setUser("asd");
+                  },
+                },
+              ]);
+            });
+          },
+        },
+      ]
+    );
   };
   return (
     <View style={styles.container}>
@@ -101,6 +234,7 @@ function Add({ route, navigation }) {
             placeholder="Nhập số điện thoại"
             variant="outlined"
             style={styles.textinput}
+            value={number}
             onChangeText={(e) => setNumber(e)}
           />
           <TouchableOpacity onPress={() => handleFind()}>

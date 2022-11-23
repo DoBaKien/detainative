@@ -1,7 +1,7 @@
 import { Stack, Text } from "@react-native-material/core";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import Header from "../../component/Header";
 
 import { format } from "date-fns";
@@ -12,6 +12,46 @@ function Profile({ navigation, route }) {
   const idl = route.params.id1;
   const type = route.params.type;
 
+  const AccpetRq = (uid, name) => {
+    axios.put(`/acceptRequest/${id}/${uid}`).then((res) => {
+      Alert.alert("Thành công", `Thêm bạn ${name} thành công `, [
+        {
+          text: "OK",
+          onPress: () => {
+            navigation.navigate("Chat", { id: id });
+          },
+        },
+      ]);
+    });
+  };
+
+  const RejecttRq = (uid, name) => {
+    Alert.alert(
+      "Cảnh báo",
+      `Bạn có chắc chắn muốn xóa lời mời kết bạn của ${name}`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            axios.delete(`/deleteRequest/${id}/${uid}`).then((res) => {
+              Alert.alert("Thành công", `Xóa lời mời kết bạn thành công `, [
+                {
+                  text: "OK",
+                  onPress: () => {
+                    navigation.navigate("Chat", { id: id });
+                  },
+                },
+              ]);
+            });
+          },
+        },
+      ]
+    );
+  };
   const friend = () => {
     if (id === idl && type === "asd") {
       return (
@@ -75,7 +115,7 @@ function Profile({ navigation, route }) {
                 },
               ]}
               onPress={() => {
-                navigation.navigate("Login");
+                RejecttRq(user.uid, user.nickName);
               }}
             >
               Hủy lời mời
@@ -85,21 +125,16 @@ function Profile({ navigation, route }) {
       );
     } else if (type === "rq" && id !== idl) {
       return (
-        <View flexDirection="row">
+        <View style={styles.viewRq}>
           <TouchableOpacity>
             <View style={[styles.button, { backgroundColor: "#98E5B7" }]}>
               <Text
-                style={[
-                  styles.buttontext,
-                  {
-                    color: "#D40707",
-                  },
-                ]}
+                style={styles.buttontext}
                 onPress={() => {
-                  navigation.navigate("Login");
+                  AccpetRq(user.uid, user.nickName);
                 }}
               >
-                Chập nhận lời mời
+                Chấp nhận
               </Text>
             </View>
           </TouchableOpacity>
@@ -113,7 +148,7 @@ function Profile({ navigation, route }) {
                   },
                 ]}
                 onPress={() => {
-                  navigation.navigate("Login");
+                  RejecttRq(user.uid, user.nickName);
                 }}
               >
                 Hủy lời mời
@@ -122,7 +157,39 @@ function Profile({ navigation, route }) {
           </TouchableOpacity>
         </View>
       );
+    } else if (type === "add" && id !== idl) {
+      return (
+        <TouchableOpacity>
+          <View style={[styles.button, { backgroundColor: "#98E5B7" }]}>
+            <Text style={styles.buttontext} onPress={() => AddFriend()}>
+              Gửi lời mởi kết bạn
+            </Text>
+          </View>
+        </TouchableOpacity>
+      );
     }
+  };
+  const AddFriend = () => {
+    axios
+      .post(`/addFriend`, {
+        uid1: id,
+        uid2: idl,
+      })
+      .then(function (re) {
+        Alert.alert(
+          "Thành công",
+          `Gửi lời mời kết bạn ${user.nickName} thành công `,
+          [
+            {
+              text: "OK",
+              onPress: () => navigation.navigate("Chat", { id: id }),
+            },
+          ]
+        );
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
   const [user, setUser] = useState("");
   const [date, setDate] = useState("");
@@ -209,6 +276,11 @@ function Profile({ navigation, route }) {
   );
 }
 const styles = StyleSheet.create({
+  viewRq: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-around",
+  },
   background: {
     position: "absolute",
     left: 0,
