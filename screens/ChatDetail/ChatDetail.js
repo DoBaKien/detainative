@@ -1,14 +1,17 @@
 import { Text } from "@react-native-material/core";
+import { useIsFocused } from "@react-navigation/native";
 import axios from "axios";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import {
+  Alert,
   FlatList,
   Image,
   StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
+import { ModalChangeName } from "../../component/ModalChangeName";
 import { AddMember } from "./AddMember";
 import ListImage from "./ListImage";
 
@@ -26,17 +29,22 @@ function ChatDetail({ route, navigation }) {
   const messImg = route.params.messImg;
   const [members, setMembers] = useState("");
   const [visible, setVisible] = useState(false);
+  const [visible1, setVisible1] = useState(false);
 
+  const isFocused = useIsFocused();
   useEffect(() => {
     axios
       .get(`/loadConvMem/${cid}`)
       .then(function (response) {
-        setMembers(response.data);
+        var result = response.data.filter(function (word) {
+          return word.uid !== id;
+        });
+        setMembers(result);
       })
       .catch(function (error) {
         console.log("loadConvMem" + error);
       });
-  }, [visible]);
+  }, [visible, isFocused]);
 
   const [conv, setConv] = useState("");
   const [role, setRole] = useState("");
@@ -71,6 +79,61 @@ function ChatDetail({ route, navigation }) {
           <ListImage a={data.item} navigation={navigation} />
         )}
       />
+    );
+  };
+
+  const handeLeave = () => {
+    Alert.alert("Cảnh báo", "Rời khỏi nhóm sẽ mất toàn bộ tin nhắn", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: () => {
+          axios.delete(`/leaveGroup/${id}/${cid}`).then(function (response) {
+            Alert.alert("Thành công", "Xóa thành công", [
+              {
+                text: "OK",
+                onPress: () => {
+                  navigation.navigate("Chat", {
+                    id: id,
+                  });
+                },
+              },
+            ]);
+          });
+        },
+      },
+    ]);
+  };
+  const handleDelete = () => {
+    Alert.alert(
+      "Giải tán nhóm",
+      "Mời tất cả mọi người rời nhóm và xóa tin nhắn? Nhóm đã giải tán sẽ KHÔNG THỂ khôi phục",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            axios.delete(`/deleteGroup/${cid}`).then(function (response) {
+              Alert.alert("Thành công", "Xóa thành công", [
+                {
+                  text: "OK",
+                  onPress: () => {
+                    navigation.navigate("Chat", {
+                      id: id,
+                    });
+                  },
+                },
+              ]);
+            });
+          },
+        },
+      ]
     );
   };
 
@@ -154,7 +217,14 @@ function ChatDetail({ route, navigation }) {
               data={members}
               keyExtractor={(item) => item.uid}
               renderItem={(data) => (
-                <ListMember a={data.item} navigation={navigation} role={role} />
+                <ListMember
+                  cid={cid}
+                  id={id}
+                  a={data.item}
+                  navigation={navigation}
+                  role={role}
+                  setMembers={setMembers}
+                />
               )}
             />
           </View>
@@ -164,12 +234,7 @@ function ChatDetail({ route, navigation }) {
           </View>
           <View style={styles.bottom}>
             <TouchableOpacity
-              style={[styles.buttontext, { backgroundColor: "#8A57DD" }]}
-            >
-              <Text style={{ color: "white" }}>Rời khỏi nhóm</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
+              onPress={handleDelete}
               style={[styles.buttontext, { backgroundColor: "#DD5757" }]}
             >
               <Text style={{ color: "white" }}>Giải tán nhóm</Text>
@@ -192,7 +257,14 @@ function ChatDetail({ route, navigation }) {
               data={members}
               keyExtractor={(item) => item.uid}
               renderItem={(data) => (
-                <ListMember a={data.item} navigation={navigation} role={role} />
+                <ListMember
+                  cid={cid}
+                  id={id}
+                  a={data.item}
+                  navigation={navigation}
+                  role={role}
+                  setMembers={setMembers}
+                />
               )}
             />
           </View>
@@ -200,8 +272,9 @@ function ChatDetail({ route, navigation }) {
             <Text variant="h6">Hình đã gửi</Text>
             {Listimg()}
           </View>
-          <View style={[styles.bottom, { justifyContent: "center" }]}>
+          <View style={styles.bottom} onPress={handeLeave}>
             <TouchableOpacity
+              onPress={handeLeave}
               style={[styles.buttontext, { backgroundColor: "#8A57DD" }]}
             >
               <Text style={{ color: "white" }}>Rời khỏi nhóm</Text>
@@ -267,7 +340,7 @@ function ChatDetail({ route, navigation }) {
             <Text variant="h6">Hình đã gửi</Text>
             {Listimg()}
           </View>
-          <View style={[styles.bottom, { justifyContent: "center" }]}>
+          <View style={styles.bottom}>
             <TouchableOpacity
               style={[styles.buttontext, { backgroundColor: "#DD5757" }]}
             >
@@ -288,6 +361,13 @@ function ChatDetail({ route, navigation }) {
         id={id}
         cid={cid}
       />
+      <ModalChangeName
+        visible={visible1}
+        setVisible={setVisible1}
+        navigation={navigation}
+        cid={cid}
+        id={id}
+      />
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
@@ -299,7 +379,12 @@ function ChatDetail({ route, navigation }) {
             source={require("../../component/image/back-icon.png")}
           />
         </TouchableOpacity>
-        <View flexDirection="row" style={{ alignItems: "center" }}>
+        <TouchableOpacity
+          style={{ alignItems: "center", flexDirection: "row" }}
+          onPress={() => {
+            setVisible1(true);
+          }}
+        >
           <Image
             style={styles.logo}
             source={require("../../component/image/logo-icon.png")}
@@ -307,7 +392,7 @@ function ChatDetail({ route, navigation }) {
           <Text variant="h5" numberOfLines={1}>
             {conv.name}
           </Text>
-        </View>
+        </TouchableOpacity>
         <Image
           style={styles.tinyLogo}
           source={require("../../component/image/info-icon.png")}
@@ -379,13 +464,13 @@ const styles = StyleSheet.create({
   bottom: {
     zIndex: 2,
     height: 80,
-    justifyContent: "space-between",
     paddingHorizontal: 20,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     backgroundColor: "#6CB6C7",
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
   },
   headerbutton: {
     justifyContent: "center",

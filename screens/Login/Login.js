@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   textinput: {
-    width: "80%",
+    width: "100%",
     marginLeft: 10,
     fontSize: 20,
   },
@@ -166,11 +166,13 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    minHeight: 200,
   },
 
   form: {
     width: "100%",
     justifyContent: "center",
+    alignItems: "center",
   },
   tinyLogo: {
     resizeMode: "contain",

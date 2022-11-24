@@ -27,7 +27,7 @@ export const ModalImg = ({ visible, setVisible, setAvatar }) => {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      quality: 1,
+      quality: 0.2,
       base64: true,
     });
     if (!result.cancelled) {

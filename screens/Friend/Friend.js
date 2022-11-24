@@ -1,4 +1,5 @@
 import { Text } from "@react-native-material/core";
+import { useIsFocused } from "@react-navigation/native";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {
@@ -14,7 +15,7 @@ import ListFriend from "./ListFriend";
 function Friend({ id, navigation }) {
   const [friends, setFriends] = useState("");
   const [search, setSearch] = useState("");
-
+  const isFocused = useIsFocused();
   useEffect(() => {
     axios
       .get(`/findUserFriends/${id}`)
@@ -24,8 +25,8 @@ function Friend({ id, navigation }) {
       .catch(function (error) {
         console.log(error);
       });
-  }, [search]);
-  
+  }, [search, isFocused]);
+
   const ser = (val) => {
     if (search === "") {
       return val;

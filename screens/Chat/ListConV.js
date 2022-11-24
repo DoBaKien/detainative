@@ -1,23 +1,24 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const ListConV = ({ a, navigation, id }) => {
   const [dir, setDir] = useState("");
-
+  useEffect(() => {
+    axios
+      .get(`/loadConvMem/${a.cid}`)
+      .then(function (response) {
+        var results = response.data.filter(function (word) {
+          return word.uid !== id;
+        });
+        setDir(results[0]);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, [a.cid]);
   const type = (name, type) => {
     if (type === "direct") {
-      axios
-        .get(`/loadConvMem/${a.cid}`)
-        .then(function (response) {
-          var results = response.data.filter(function (word) {
-            return word.uid !== id;
-          });
-          setDir(results[0]);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
       return (
         <View style={styles.chip}>
           <Image

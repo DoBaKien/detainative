@@ -12,9 +12,9 @@ import {
 import ListMess from "./ListMess";
 import { io } from "socket.io-client";
 import { LinearGradient } from "expo-linear-gradient";
-import * as ImagePicker from "expo-image-picker";
 import { ModalChat } from "../../component/ModalChat";
-
+import EmojiPicker from "rn-emoji-picker";
+import { emojis } from "rn-emoji-picker/dist/data";
 const socket = io.connect("https://chat-app-provip.herokuapp.com");
 
 function Message({ route, navigation }) {
@@ -28,6 +28,9 @@ function Message({ route, navigation }) {
   const [messageList, setMessageList] = useState([]);
   const [messImg, setMessImg] = useState([]);
   const [visible, setVisible] = useState(false);
+  const [input, setInput] = useState("");
+  const [openE, setOpenE] = useState(false);
+  const [show, setShow] = useState("none");
   useEffect(() => {
     socket.emit("join_room", cid);
     axios
@@ -78,7 +81,7 @@ function Message({ route, navigation }) {
         room: cid,
         uid: id,
         content: currentMessage,
-        time:
+        sentTime:
           new Date(Date.now()).getHours() +
           ":" +
           new Date(Date.now()).getMinutes(),
@@ -88,6 +91,8 @@ function Message({ route, navigation }) {
       await socket.emit("send_message", messageData);
     }
     setCurrentMessage("");
+    setInput("");
+    setOpenE(false);
   };
   useEffect(() => {
     socket.on("receive_message", (data) => {
@@ -99,7 +104,16 @@ function Message({ route, navigation }) {
     socket.emit("ic_leave", cid);
     navigation.goBack();
   };
-
+  useEffect(() => {
+    toggle();
+  }, [openE]);
+  const toggle = () => {
+    if (openE) {
+      setShow("flex");
+    } else {
+      setShow("none");
+    }
+  };
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -139,7 +153,8 @@ function Message({ route, navigation }) {
           />
         </TouchableOpacity>
       </View>
-      <View style={{ flex: 1, marginTop: 10 }}>
+
+      <View style={{ flex: 1, minHeight: 300, marginTop: 10 }}>
         <FlatList
           ref={scrollViewRef}
           onContentSizeChange={() =>
@@ -147,11 +162,18 @@ function Message({ route, navigation }) {
           }
           data={messageList}
           renderItem={(data) => (
-            <ListMess con={data.item} id={id} user={user} />
+            <ListMess
+              con={data.item}
+              id={id}
+              user={user}
+              cid={cid}
+              setMessageList={setMessageList}
+            />
           )}
           style={styles.list}
         />
       </View>
+
       <View style={styles.input}>
         <TouchableOpacity onPress={() => setVisible(true)}>
           <Image
@@ -159,7 +181,7 @@ function Message({ route, navigation }) {
             source={require("../../component/image/image-icon.png")}
           />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => setOpenE(!openE)}>
           <Image
             style={styles.tinyLogo}
             source={require("../../component/image/emoji-icon.png")}
@@ -168,8 +190,11 @@ function Message({ route, navigation }) {
         <TextInput
           placeholder="Nhập tin nhắn"
           style={styles.inputtext}
-          value={currentMessage}
-          onChangeText={(value) => setCurrentMessage(value)}
+          value={input}
+          onChangeText={(value) => {
+            setInput(value);
+            setCurrentMessage(value);
+          }}
         />
         <TouchableOpacity onPress={handle}>
           <Image
@@ -177,6 +202,20 @@ function Message({ route, navigation }) {
             source={require("../../component/image/send-icon.png")}
           />
         </TouchableOpacity>
+      </View>
+      <View style={{ height: 300, display: show }}>
+        <EmojiPicker
+          emojis={emojis}
+          autoFocus={false}
+          loading={false}
+          perLine={10}
+          onSelect={(e) => {
+            setInput((prevInput) => prevInput + e.emoji);
+            setCurrentMessage((prevInput) => prevInput + e.emoji);
+          }}
+          darkMode={false}
+          category="smileys & emotion"
+        />
       </View>
     </View>
   );

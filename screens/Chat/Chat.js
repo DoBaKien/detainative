@@ -1,12 +1,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, TextInput, View } from "react-native";
-
+import { useIsFocused } from "@react-navigation/native";
 import ListConV from "./ListConV";
 
 function Chat({ id, navigation }) {
   const [conV, setConV] = useState("");
   const [search, setSearch] = useState("");
+  const isFocused = useIsFocused();
   useEffect(() => {
     axios
       .get(`/loadUserConv/${id}`)
@@ -16,7 +17,7 @@ function Chat({ id, navigation }) {
       .catch(function (error) {
         console.log(error);
       });
-  }, [search]);
+  }, [search, isFocused]);
 
   const ser = (val) => {
     if (search === "") {

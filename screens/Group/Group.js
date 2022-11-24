@@ -1,4 +1,5 @@
 import { Text } from "@react-native-material/core";
+import { useIsFocused } from "@react-navigation/native";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {
@@ -16,6 +17,7 @@ function Group({ id, navigation }) {
   const [groups, setGroups] = useState("");
   const [search, setSearch] = useState("");
   const [visible, setVisible] = useState(false);
+  const isFocused = useIsFocused();
   const ser = (val) => {
     if (search === "") {
       return val;
@@ -35,7 +37,7 @@ function Group({ id, navigation }) {
       .catch(function (error) {
         console.log(error);
       });
-  }, [search]);
+  }, [search, isFocused]);
   return (
     <View style={styles.container}>
       <AddGroup visible={visible} setVisible={setVisible} id={id} />

@@ -1,13 +1,47 @@
 import { Text } from "@react-native-material/core";
-import { Image, StyleSheet, View } from "react-native";
+import axios from "axios";
+import { Alert, Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
-function ListMember({ a, role }) {
+function ListMember({ a, role, setMembers, id, cid }) {
+  const handleXoa = () => {
+    Alert.alert("Cảnh báo", "Xóa thành viên này ra khỏi nhóm", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: () => {
+          axios.delete(`/leaveGroup/${a.uid}/${cid}`).then(function (response) {
+            Alert.alert("Thành công", "Xóa thành công", [
+              {
+                text: "OK",
+                onPress: () => {
+                  axios
+                    .get(`/loadConvMem/${cid}`)
+                    .then(function (response) {
+                      var result = response.data.filter(function (word) {
+                        return word.uid !== id;
+                      });
+                      setMembers(result);
+                    })
+                    .catch(function (error) {
+                      console.log("loadConvMem" + error);
+                    });
+                },
+              },
+            ]);
+          });
+        },
+      },
+    ]);
+  };
   const type = () => {
     if (role === "Owner") {
       return (
-        <View style={styles.buttontext}>
+        <TouchableOpacity style={styles.buttontext} onPress={handleXoa}>
           <Text style={{ color: "white" }}>Xóa khỏi nhóm</Text>
-        </View>
+        </TouchableOpacity>
       );
     } else {
       return (
