@@ -15,6 +15,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { ModalChat } from "../../component/ModalChat";
 import EmojiPicker from "rn-emoji-picker";
 import { emojis } from "rn-emoji-picker/dist/data";
+import { useIsFocused } from "@react-navigation/native";
 const socket = io.connect("https://chat-app-provip.herokuapp.com");
 
 function Message({ route, navigation }) {
@@ -31,6 +32,8 @@ function Message({ route, navigation }) {
   const [input, setInput] = useState("");
   const [openE, setOpenE] = useState(false);
   const [show, setShow] = useState("none");
+  const [dir, setDir] = useState("");
+  const isFocused = useIsFocused();
   useEffect(() => {
     socket.emit("join_room", cid);
     axios
@@ -45,7 +48,7 @@ function Message({ route, navigation }) {
       .catch(function (error) {
         console.log("receive" + error);
       });
-  }, []);
+  }, [isFocused]);
   useEffect(() => {
     axios
       .get(`/loadConvMem/${cid}`)
@@ -55,7 +58,7 @@ function Message({ route, navigation }) {
       .catch(function (error) {
         console.log("loadConvMem" + error);
       });
-  }, []);
+  }, [isFocused]);
   useEffect(() => {
     axios
       .get(`/loadConv/${cid}`)
@@ -114,6 +117,29 @@ function Message({ route, navigation }) {
       setShow("none");
     }
   };
+
+  useEffect(() => {
+    axios
+      .get(`/loadConvMem/${cid}`)
+      .then(function (response) {
+        var results = response.data.filter(function (word) {
+          return word.uid !== id;
+        });
+        setDir(results[0]);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, [cid, id]);
+
+  const tyqw = () => {
+    if (conv.type === "direct") {
+      return <Text variant="h5">{dir.nickName}</Text>;
+    } else {
+      return <Text variant="h5">{conv.name}</Text>;
+    }
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -136,7 +162,8 @@ function Message({ route, navigation }) {
             source={require("../../component/image/back-icon.png")}
           />
         </TouchableOpacity>
-        <Text variant="h5">{conv.name}</Text>
+        {tyqw()}
+
         <TouchableOpacity
           onPress={() =>
             navigation.navigate("ChatDetail", {

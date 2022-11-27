@@ -1,65 +1,23 @@
 import { Text } from "@react-native-material/core";
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import { Alert, Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ModalMessage } from "../../component/ModalMessage";
 
 const ListMess = ({ con, id, user, setMessageList, cid }) => {
+  const [visible, setVisible] = useState(false);
   const idMessage = (uid) => {
     let idSend = id;
     return idSend === uid;
   };
 
-  const deleteMess = (uid, msid) => {
-    if (idMessage(uid)) {
-      Alert.alert(
-        "Bạn có chắn chắn muốn xóa",
-        "Một khi đã xóa thì KHÔNG THỂ khôi phục",
-        [
-          {
-            text: "Cancel",
-            style: "cancel",
-          },
-          {
-            text: "OK",
-            onPress: () => {
-              axios
-                .delete(`/deleteMessage/${msid}`)
-                .then(function (response) {
-                  Alert.alert("Thành công", "Xóa thành Công", [
-                    {
-                      text: "OK",
-                      onPress: () => {
-                        axios
-                          .get(`/receive/${cid}`)
-                          .then(function (response) {
-                            setMessageList(response.data);
-                          })
-                          .catch(function (error) {
-                            console.log("receive" + error);
-                          });
-                      },
-                    },
-                  ]);
-                })
-                .catch(function (error) {
-                  console.log(error);
-                });
-            },
-          },
-        ]
-      );
-    } else {
-      console.log("asd");
-    }
-  };
-
-  const test = (content, time, uid, msid) => {
+  const test = (content, time) => {
     if (content.length > 1000) {
       return (
         <View>
           <TouchableOpacity
-            onLongPress={() => {
-              deleteMess(uid, msid);
+            onPress={() => {
+              setVisible(true);
             }}
             style={{
               width: 200,
@@ -96,7 +54,7 @@ const ListMess = ({ con, id, user, setMessageList, cid }) => {
         <View>
           <TouchableOpacity
             onPress={() => {
-              deleteMess(uid, msid);
+              setVisible(true);
             }}
             style={{
               width: "100%",
@@ -131,6 +89,15 @@ const ListMess = ({ con, id, user, setMessageList, cid }) => {
   };
   return (
     <View>
+      <ModalMessage
+        visible={visible}
+        setVisible={setVisible}
+        content={con.content}
+        cid={cid}
+        id={id}
+        msid={con.msid}
+        uid={con.uid}
+      />
       <View
         style={{
           width: "100%",
@@ -175,7 +142,7 @@ const ListMess = ({ con, id, user, setMessageList, cid }) => {
                 {number.nickName}
               </Text>
             ))}
-          <View>{test(con.content, con.sentTime, con.uid, con.msid)}</View>
+          <View>{test(con.content, con.sentTime)}</View>
         </View>
       </View>
     </View>

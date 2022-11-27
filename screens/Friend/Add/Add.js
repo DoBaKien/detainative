@@ -35,7 +35,6 @@ function Add({ route, navigation }) {
               .get(`/checkFStt/${id}/${response.data.uid}`)
               .then(function (response) {
                 setType(response.data);
-                console.log(response.data);
               })
               .catch(function (error) {
                 console.log(error);
@@ -46,7 +45,7 @@ function Add({ route, navigation }) {
           console.log(error);
         });
     }
-    setNumber("")
+    setNumber("");
   };
   const AddFriend = () => {
     axios

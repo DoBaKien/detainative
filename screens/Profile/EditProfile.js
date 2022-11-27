@@ -34,14 +34,14 @@ function EditProfile({ navigation, route }) {
   const [show, setShow] = useState(false);
   const [text, setText] = useState("");
   const [visible, setVisible] = useState(false);
-  
+
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || datec;
     setShow(Platform.OS === "ios");
     setDatec(currentDate);
     let tempDate = new Date(currentDate);
     let a = "";
-    if (tempDate.getMonth() > 9) {
+    if (tempDate.getMonth() > 8) {
       a = tempDate.getMonth() + 1;
     } else {
       a = "0" + (tempDate.getMonth() + 1);
@@ -50,7 +50,7 @@ function EditProfile({ navigation, route }) {
 
     if (tempDate.getDate() > 9) {
       b = tempDate.getDate();
-    } else {
+    } else if (tempDate.getMonth() < 10) {
       b = "0" + tempDate.getDate();
     }
 
@@ -239,13 +239,13 @@ function EditProfile({ navigation, route }) {
           </View>
         </View>
         <View style={styles.boxinput}>
-          <Text style={{ fontSize: 18 }}>Số điện thoại </Text>
+          <Text style={{ fontSize: 18 }}>Email </Text>
           <TextInput
-            placeholder="Số điện thoại"
+            placeholder="Email"
             variant="outlined"
             style={[styles.input, { width: "60%" }]}
-            value={phoneNumber}
-            onChangeText={(e) => setNickName(e)}
+            value={email}
+            onChangeText={(e) => setEmail(e)}
           />
         </View>
       </View>

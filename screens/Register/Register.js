@@ -10,8 +10,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 var regUserName = /^[0-9]{9,10}$/;
 var regpass = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
 import { ModalOTP } from "./ModalOTP";
 function Register({ navigation }) {
   const [sdt, setsdt] = useState("");

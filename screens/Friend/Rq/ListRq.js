@@ -13,7 +13,7 @@ function ListRq({ a, id, setFriendRq, navigation }) {
           text: "OK",
           onPress: () => {
             axios
-              .get(`${ip}/findPendingRequests/${id}`)
+              .get(`/findPendingRequests/${id}`)
               .then(function (response) {
                 setFriendRq(response.data);
               })

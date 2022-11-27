@@ -25,8 +25,11 @@ function Login({ navigation }) {
     }
   };
   function callFunctionJs() {
-    // Alert.alert("Yêu cầu", "Vui lòng nhập đầy đủ thông tin", [{ text: "OK" }]);
-
+    // if (sdt === "" || mk === "") {
+    //   Alert.alert("Yêu cầu", "Vui lòng nhập đầy đủ thông tin", [
+    //     { text: "OK" },
+    //   ]);
+    // } else {
     axios
       .post(`/login`, {
         phoneNumber: "0905515525",
@@ -49,6 +52,7 @@ function Login({ navigation }) {
       .catch(function (error) {
         console.log(error);
       });
+    // }
   }
 
   return (

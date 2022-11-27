@@ -42,30 +42,34 @@ export const AddGroup = ({ visible, setVisible, id }) => {
   };
 
   const handleadd = () => {
-    axios
-      .post(`/newConv/${id}`, {
-        name: name,
-      })
-      .then(function (response) {
-        axios
-          .post(`/newMems/${response.data}`, categories)
-          .then(function (response) {
-            Alert.alert("Thành công", `Tạo nhóm ${name} thành công`, [
-              {
-                text: "OK",
-                onPress: () => {
-                  setVisible(false);
+    if (name !== "" && categories.length > 0) {
+      axios
+        .post(`/newConv/${id}`, {
+          name: name,
+        })
+        .then(function (response) {
+          axios
+            .post(`/newMems/${response.data}`, categories)
+            .then(function (response) {
+              Alert.alert("Thành công", `Tạo nhóm ${name} thành công`, [
+                {
+                  text: "OK",
+                  onPress: () => {
+                    setVisible(false);
+                  },
                 },
-              },
-            ]);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+              ]);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    } else {
+      Alert.alert("Cảnh báo", "Phải nhập đầy đủ");
+    }
   };
 
   return (

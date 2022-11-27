@@ -1,5 +1,5 @@
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
+import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 function Header({ navigation, id }) {
@@ -17,7 +17,11 @@ function Header({ navigation, id }) {
           navigation.goBack();
         }}
       >
-        <Icon name="log-out" size={30} color="#900" style={styles.imagestyle} />
+        <Icon
+          name="arrow-back-circle-sharp"
+          size={40}
+          style={styles.imagestyle}
+        />
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
