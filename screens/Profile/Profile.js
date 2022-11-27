@@ -2,10 +2,9 @@ import { Stack, Text } from "@react-native-material/core";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Alert, Image, StyleSheet, TouchableOpacity, View } from "react-native";
-import Header from "../../component/Header";
-
 import { format } from "date-fns";
 import { LinearGradient } from "expo-linear-gradient";
+import HeaderProfile from "../../component/HeaderProfile";
 
 function Profile({ navigation, route }) {
   const id = route.params.id;
@@ -216,7 +215,7 @@ function Profile({ navigation, route }) {
         ]}
         style={styles.background}
       />
-      <Header id={id} navigation={navigation} />
+      <HeaderProfile id={id} navigation={navigation} />
       <View
         style={[
           styles.body,
