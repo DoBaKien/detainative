@@ -25,34 +25,34 @@ function Login({ navigation }) {
     }
   };
   function callFunctionJs() {
-    // if (sdt === "" || mk === "") {
-    //   Alert.alert("Yêu cầu", "Vui lòng nhập đầy đủ thông tin", [
-    //     { text: "OK" },
-    //   ]);
-    // } else {
-    axios
-      .post(`/login`, {
-        phoneNumber: "0905515525",
-        password: "kien2209",
-      })
-      .then(function (response) {
-        if (response.data === "Sai thong tin dang nhap") {
-          Alert.alert(
-            "Cảnh báo",
-            "Vui lòng kiểm tra số điện thoại hoặc mật khấu",
-            [{ text: "OK" }]
-          );
-        } else {
-          storeData(response.data);
-          navigation.navigate("Chat", {
-            id: response.data,
-          });
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    // }
+    if (sdt === "" || mk === "") {
+      Alert.alert("Yêu cầu", "Vui lòng nhập đầy đủ thông tin", [
+        { text: "OK" },
+      ]);
+    } else {
+      axios
+        .post(`/login`, {
+          phoneNumber: sdt,
+          password: mk,
+        })
+        .then(function (response) {
+          if (response.data === "Sai thong tin dang nhap") {
+            Alert.alert(
+              "Cảnh báo",
+              "Vui lòng kiểm tra số điện thoại hoặc mật khấu",
+              [{ text: "OK" }]
+            );
+          } else {
+            storeData(response.data);
+            navigation.navigate("Chat", {
+              id: response.data,
+            });
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
   }
 
   return (
