@@ -3,6 +3,36 @@ import axios from "axios";
 import { Alert, Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
 function ListMember({ a, role, setMembers, id, cid }) {
+  const handleRole = (uid) => {
+    Alert.alert("Cảnh báo", "MỘt khi đã ủy quyền thì KHÔNG THỂ hoàn tác", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: () => {
+          axios.put(`/nRole/${cid}/${id}/${uid}`).then(function (response) {
+            Alert.alert("Thành công", "Ủy quyền thành công", [
+              {
+                text: "OK",
+                onPress: () => {
+                  axios
+                    .get(`/loadConvRoleMem/${cid}`)
+                    .then(function (response) {
+                      setMembers(response.data);
+                    })
+                    .catch(function (error) {
+                      console.log("loadConvMem" + error);
+                    });
+                },
+              },
+            ]);
+          });
+        },
+      },
+    ]);
+  };
   const handleXoa = () => {
     Alert.alert("Cảnh báo", "Xóa thành viên này ra khỏi nhóm", [
       {
@@ -39,9 +69,19 @@ function ListMember({ a, role, setMembers, id, cid }) {
   const type = () => {
     if (role === "Owner") {
       return (
-        <TouchableOpacity style={styles.buttontext} onPress={handleXoa}>
-          <Text style={{ color: "white" }}>Xóa khỏi nhóm</Text>
-        </TouchableOpacity>
+        <>
+          <TouchableOpacity
+            style={styles.buttontext2}
+            onPress={() => handleRole(a.uid)}
+          >
+            <Text style={{ textAlign: "center" }}>Ủy Quyền</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttontext} onPress={handleXoa}>
+            <Text style={{ color: "white", textAlign: "center" }}>
+              Xóa khỏi nhóm
+            </Text>
+          </TouchableOpacity>
+        </>
       );
     } else {
       return (
@@ -62,7 +102,7 @@ function ListMember({ a, role, setMembers, id, cid }) {
         }}
       />
 
-      <Text variant="subtitle1" numberOfLines={1} style={{ width: 180 }}>
+      <Text variant="subtitle1" numberOfLines={1} style={{ width: 120 }}>
         {a.nickName}
       </Text>
       {type()}
@@ -72,10 +112,15 @@ function ListMember({ a, role, setMembers, id, cid }) {
 
 const styles = StyleSheet.create({
   buttontext: {
-    width: 150,
-    borderRadius: 30,
-    paddingLeft: 20,
+    width: 90,
+    borderRadius: 10,
+
     backgroundColor: "red",
+  },
+  buttontext2: {
+    width: 100,
+    borderRadius: 30,
+    backgroundColor: "#B9ECBB",
   },
   buttontv: {
     width: 120,

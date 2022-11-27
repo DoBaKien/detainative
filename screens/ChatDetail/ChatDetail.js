@@ -34,12 +34,9 @@ function ChatDetail({ route, navigation }) {
   const isFocused = useIsFocused();
   useEffect(() => {
     axios
-      .get(`/loadConvMem/${cid}`)
+      .get(`/loadConvRoleMem/${cid}`)
       .then(function (response) {
-        var result = response.data.filter(function (word) {
-          return word.uid !== id;
-        });
-        setMembers(result);
+        setMembers(response.data);
       })
       .catch(function (error) {
         console.log("loadConvMem" + error);
